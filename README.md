@@ -7,7 +7,7 @@ Projeto aplicado longitudinal da disciplina de Processamento de Imagens — Etap
 ## Integrantes
 
 - Guilherme de Alcantara Leite
-- Gabriel Andrade Urbano
+- Gabriel de Andrade Urbano
 
 ## Problema investigado
 
@@ -52,11 +52,10 @@ Resultado: vaga livre ou ocupada
 - **Dataset:** [PKLot](https://web.inf.ufpr.br/vri/databases/parking-lot-database/) (UFPR/PUCPR), também disponível no Kaggle.
 - Contém milhares de imagens de estacionamentos reais, já anotadas com a posição de cada vaga e seu status (ocupada/livre), capturadas em diferentes condições de iluminação e clima.
 - Para a M1, será utilizado um subconjunto pequeno e controlado do dataset (poucas imagens de um mesmo estacionamento, em condição de iluminação semelhante), para reduzir variabilidade nos primeiros testes.
-- **Licença/uso:** [preencher com a licença específica do PKLot — verificar na página oficial antes da entrega].
 
 ## Estágio atual do projeto
 
-Etapa **M1**: definição do problema, escolha do dataset e desenho do pipeline preliminar concluídos. [Atualizar aqui conforme o projeto avançar: ex. "experimentos preliminares em andamento", "primeira versão do classificador por limiar implementada", etc.]
+Etapa **M1**: definição do problema, escolha do dataset e desenho do pipeline preliminar concluídos. [Atualizar aqui conforme o projeto avançar]
 
 ## Organização do repositório
 
@@ -64,14 +63,13 @@ Etapa **M1**: definição do problema, escolha do dataset e desenho do pipeline 
 [nome-do-projeto]/
 ├── README.md
 ├── docs/
-│   └── proposta.md
+│   └── proposta.md       # proposta detalhada (problema, objetivo, pipeline, viabilidade)
 ├── images/
-│   ├── input/        # imagens de exemplo do PKLot usadas nos testes
-│   └── results/       # imagens de saída com vagas marcadas (livre/ocupada)
-├── src/                # código-fonte (quando implementado)
-├── notebooks/          # notebooks exploratórios (quando aplicável)
-└── .gitignore
-```
+│   ├── input/            # amostra de imagens de entrada
+│   └── results/          # imagens de saída/experimentos
+├── src/                  # código-fonte (quando existir)
+├── notebooks/            # notebooks exploratórios
+└── tests/                # testes (quando aplicável)
 
 ## Tecnologias previstas
 
