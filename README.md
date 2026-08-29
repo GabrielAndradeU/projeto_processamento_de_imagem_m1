@@ -70,6 +70,7 @@ Etapa **M1**: definição do problema, escolha do dataset e desenho do pipeline 
 ├── src/                  # código-fonte (quando existir)
 ├── notebooks/            # notebooks exploratórios
 └── tests/                # testes (quando aplicável)
+```
 
 ## Tecnologias previstas
 
@@ -90,5 +91,7 @@ Etapa **M1**: definição do problema, escolha do dataset e desenho do pipeline 
 - Proposta detalhada: [`docs/proposta.md`](docs/proposta.md)
 
 ## Uso de Inteligência Artificial generativa
+
+Ferramenta utilizada: Claude (Anthropic), para apoio na redação e estruturação deste README e da proposta detalhada. As decisões técnicas (escolha do problema, do dataset PKLot, do pipeline e das técnicas candidatas) foram definidas pelo grupo; a IA foi usada para organizar e redigir esse conteúdo de forma clara, e o texto final foi revisado e ajustado pelos integrantes.
 
 
