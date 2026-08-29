@@ -1,5 +1,5 @@
 # projeto_processamento_de_imagem_m1
-<<<<<<< HEAD
+
 # Detecção de Vagas de Estacionamento Livres/Ocupadas
 
 Projeto aplicado longitudinal da disciplina de Processamento de Imagens — Etapa M1.
