@@ -1,4 +1,5 @@
 # projeto_processamento_de_imagem_m1
+<<<<<<< HEAD
 # Detecção de Vagas de Estacionamento Livres/Ocupadas
 
 Projeto aplicado longitudinal da disciplina de Processamento de Imagens — Etapa M1.
@@ -92,4 +93,4 @@ Etapa **M1**: definição do problema, escolha do dataset e desenho do pipeline 
 
 ## Uso de Inteligência Artificial generativa
 
-[Preencher conforme uso real: ferramenta utilizada (ex. Claude), finalidade (ex. apoio na estruturação do README e da proposta), material produzido/modificado, e como o grupo verificou o conteúdo gerado.]
+
