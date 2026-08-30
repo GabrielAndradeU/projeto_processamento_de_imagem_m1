@@ -84,7 +84,7 @@ Etapa **M1**: definição do problema, escolha do dataset e desenho do pipeline 
 
 ## Vídeo da M1
 
-[Link do vídeo não listado no YouTube — adicionar após a gravação]
+[https://youtu.be/zJYcdofJcpc]
 
 ## Documentação adicional
 
