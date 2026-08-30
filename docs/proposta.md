@@ -2,7 +2,7 @@
 
 > **Status:** M1 — definição do problema, investigação de viabilidade e planejamento técnico.
 > **Disciplina:** Processamento de Imagens
-> **Integrantes:** _(preencher nomes e e-mails/GitHub)_
+> **Integrantes:** Guilherme de Alcantara Leite e Gabriel Andrade Urbano / **Github:** guilhermedalcantara e GabrielAndradeU
 
 ---
 
