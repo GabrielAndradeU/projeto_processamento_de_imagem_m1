@@ -6,8 +6,9 @@ import numpy as np
 from anotacoes import carregar_vagas
 from recorte import recortar_vaga
 
-PASTA_ENTRADA = Path("images/input")
-PASTA_SAIDA = Path("images/results/diagnostico")
+RAIZ = Path(__file__).resolve().parents[1]
+PASTA_ENTRADA = RAIZ / "images" / "input"
+PASTA_SAIDA = RAIZ / "images" / "results" / "diagnostico"
 
 LIMITE_PRETO = 0.5   # fração de pixels pretos a partir da qual o recorte é sinalizado
 NIVEL_PRETO = 5      # tom de cinza (0-255) considerado preto

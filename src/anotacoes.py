@@ -4,8 +4,9 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-PASTA_ENTRADA = Path("images/input")
-PASTA_RESULTADOS = Path("images/results")
+RAIZ = Path(__file__).resolve().parents[1]
+PASTA_ENTRADA = RAIZ / "images" / "input"
+PASTA_RESULTADOS = RAIZ / "images" / "results"
 
 COR_LIVRE = (0, 255, 0)      # verde (BGR)
 COR_OCUPADA = (0, 0, 255)    # vermelho (BGR)
@@ -21,7 +22,7 @@ def carregar_vagas(caminho_xml):
     raiz = ET.parse(caminho_xml).getroot()
 
     for espaco in raiz.findall("space"):
-        # TODO 1: o atributo vem como texto ("1" ou "0") ou None se não existir
+        # o atributo vem como texto ("1" ou "0") ou None se não existir
         atributo = espaco.get("occupied")
         if atributo is None:
             continue  # sem gabarito, não serve para avaliação
@@ -43,7 +44,7 @@ def desenhar_vagas(imagem, vagas):
     """Desenha o contorno de cada vaga: verde = livre, vermelho = ocupada."""
     saida = imagem.copy()
     for vaga in vagas:
-        # TODO 2: escolhe a cor conforme o estado (OpenCV usa BGR)
+        # escolhe a cor conforme o estado (OpenCV usa BGR)
         cor = COR_OCUPADA if vaga["ocupada"] else COR_LIVRE
         cv2.polylines(saida, [vaga["contorno"]], isClosed=True, color=cor, thickness=2)
     return saida
@@ -61,7 +62,7 @@ if __name__ == "__main__":
 
         vagas = carregar_vagas(caminho_xml)
 
-        # TODO 3: resumo por imagem
+        # resumo por imagem
         total = len(vagas)
         ocupadas = sum(v["ocupada"] for v in vagas)
         livres = total - ocupadas

@@ -5,8 +5,9 @@ import numpy as np
 
 from anotacoes import carregar_vagas
 
-PASTA_ENTRADA = Path("images/input")
-PASTA_RECORTES = Path("images/results/recortes")
+RAIZ = Path(__file__).resolve().parents[1]
+PASTA_ENTRADA = RAIZ / "images" / "input"
+PASTA_RECORTES = RAIZ / "images" / "results" / "recortes"
 
 # Tamanho fixo de cada vaga retificada (ajuste olhando os recortes)
 LARGURA = 64
