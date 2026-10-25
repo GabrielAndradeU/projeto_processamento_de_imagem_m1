@@ -1,0 +1,4 @@
+# Versões mínimas testadas. Para fixar as do seu ambiente: pip freeze | grep -i -E "opencv|numpy|matplotlib"
+opencv-python>=4.8
+numpy>=1.24
+matplotlib>=3.7
