@@ -1,3 +1,5 @@
 images/results/recortes/
 .venv/
 images/results/recortes/
+__pycache__/
+*.pyc

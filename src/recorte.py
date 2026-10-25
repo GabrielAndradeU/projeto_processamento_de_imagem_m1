@@ -14,16 +14,26 @@ ALTURA = 96
 
 
 def ordenar_pontos(pontos):
-    """Ordena 4 pontos em: topo-esq, topo-dir, baixo-dir, baixo-esq."""
-    pontos = pontos.astype(np.float32)
-    soma = pontos.sum(axis=1)                 # x + y
-    dif = np.diff(pontos, axis=1).ravel()     # y - x
+    """Ordena 4 pontos no sentido horário, com o lado curto da vaga em 0->1.
 
-    ordenados = np.zeros((4, 2), dtype=np.float32)
-    ordenados[0] = pontos[np.argmin(soma)]    # topo-esquerdo: menor x + y
-    ordenados[2] = pontos[np.argmax(soma)]    # baixo-direito: maior x + y
-    ordenados[1] = pontos[np.argmin(dif)]     # topo-direito: menor y - x
-    ordenados[3] = pontos[np.argmax(dif)]     # baixo-esquerdo: maior y - x
+    Ordena pelo ângulo em torno do centro (não depende de empates de soma/diferença,
+    que geravam pontos repetidos em vagas inclinadas), começa pelo canto de menor
+    x + y e gira a lista para que o lado 0->1 seja o menor: o lado curto da vaga
+    vira LARGURA e o lado longo vira ALTURA.
+    """
+    pontos = pontos.astype(np.float32)
+    centro = pontos.mean(axis=0)
+    angulos = np.arctan2(pontos[:, 1] - centro[1], pontos[:, 0] - centro[0])
+    # Na imagem o eixo y desce, então ângulo crescente = sentido horário
+    ordenados = pontos[np.argsort(angulos)]
+
+    inicio = int(np.argmin(ordenados.sum(axis=1)))
+    ordenados = np.roll(ordenados, -inicio, axis=0)
+
+    lado_01 = np.linalg.norm(ordenados[1] - ordenados[0])
+    lado_12 = np.linalg.norm(ordenados[2] - ordenados[1])
+    if lado_01 > lado_12:
+        ordenados = np.roll(ordenados, -1, axis=0)
     return ordenados
 
 
