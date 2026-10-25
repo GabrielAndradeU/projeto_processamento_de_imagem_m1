@@ -2,7 +2,8 @@ import csv
 import sys
 from pathlib import Path
 
-ARQUIVO_PADRAO = Path("images/results/medidas_configA.csv")
+RAIZ = Path(__file__).resolve().parents[1]
+ARQUIVO_PADRAO = RAIZ / "images" / "results" / "medidas_configA.csv"
 DIAS_TESTE = {"2012-12-12"}   # dias reservados para a avaliação final; os demais ajustam o limiar
 
 
@@ -70,6 +71,8 @@ def fmt(valor):
 def escolher_limiar(linhas_ajuste):
     """Testa os pontos médios entre medidas consecutivas e fica com o de maior acurácia balanceada."""
     valores = sorted({l["medida"] for l in linhas_ajuste})
+    if len(valores) < 2:
+        return None   # sem pontos médios para testar
     candidatos = [(a + b) / 2 for a, b in zip(valores, valores[1:])]
 
     melhor_limiar, melhor_nota = None, -1.0
@@ -109,6 +112,9 @@ if __name__ == "__main__":
         sys.exit(1)
 
     limiar = escolher_limiar(ajuste)
+    if limiar is None:
+        print("O conjunto de ajuste tem um único valor de medida; não há limiar a escolher.")
+        sys.exit(1)
     print(f"\nLimiar escolhido no ajuste: {limiar:.4f}")
 
     # Baseline "sempre ocupada": limiar negativo nunca prevê livre (medida >= 0)
@@ -117,6 +123,9 @@ if __name__ == "__main__":
     if teste:
         imprimir("TESTE - baseline 'sempre ocupada'", teste, -1.0)
         imprimir("TESTE - método", teste, limiar)
+    else:
+        print(f"\nATENÇÃO: nenhuma vaga nos dias de teste {sorted(DIAS_TESTE)}. "
+              "Ajuste DIAS_TESTE para um dia presente em images/input/.")
 
     print("\n=== Ocupadas com menor medida (candidatas à análise de falhas) ===")
     ocupadas = sorted((l for l in linhas if not l["livre"]), key=lambda l: l["medida"])
