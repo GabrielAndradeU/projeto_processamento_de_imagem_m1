@@ -2,7 +2,6 @@
 
 **Projeto:** Detecção de vagas de estacionamento livres/ocupadas
 **Integrantes:** Guilherme de Alcantara Leite ([@guilhermedalcantara](https://github.com/guilhermedalcantara)) e Gabriel de Andrade Urbano ([@GabrielAndradeU](https://github.com/GabrielAndradeU))
-**Entrega:** tag/commit ⚠️ (ex.: `m2-entrega`)
 
 ---
 
