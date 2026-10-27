@@ -33,6 +33,7 @@ Na M2 o objetivo foi transformar a proposta da M1 em uma implementação parcial
 | CNN rasa | **Removida do escopo** | Complexidade e tempo; o enunciado não exige | `docs/proposta.md` |
 | CNRPark-EXT como segundo dataset | **Removido** | Escopo e tempo; foco em um único dataset bem caracterizado | `docs/proposta.md` |
 | Avaliação de generalização entre câmeras/clima | **Parcial** | Separação por dia implementada; câmeras/clima ficam para a M3 | `src/avaliacao.py` |
+| Ampliação da amostra (mais vagas livres) | **Adiada para a M3** | Limitação assumida e documentada nas seções 3.2 e 7 | Plano da M3 |
 
 ### 2.2 Resposta ao feedback da M1
 
@@ -48,10 +49,10 @@ Na M2 o objetivo foi transformar a proposta da M1 em uma implementação parcial
 ### 3.1 Origem e características
 
 - **Dataset:** PKLot (Almeida et al., 2015), UFPR/PUCPR, licença CC BY 4.0. As imagens têm 1280×720 px, vêm com um XML por imagem (polígono de 4 pontos e atributo `occupied` por vaga) e foram capturadas por câmeras fixas elevadas.
-- **Estacionamento/câmera usado:** ⚠️ (ex.: UFPR04).
+- **Estacionamento/câmera usado:** UFPR04.
 - **Distribuição:** o dataset **não é versionado** no repositório. As instruções de obtenção estão no README; `images/input/` contém apenas a amostra usada.
 
-### 3.2 Amostra da rodada preliminar (Rodada 1)
+### 3.2 Amostra da rodada preliminar
 
 | Dia | Imagens (ID) | Papel | Horário |
 |---|---|---|---|
@@ -64,21 +65,19 @@ Na M2 o objetivo foi transformar a proposta da M1 em uma implementação parcial
 | Teste | 2 | 56 | **0** | 56 |
 | Total | 6 | 166 | 5 | 161 |
 
-Clima das imagens: ⚠️ (ensolarado/nublado/chuvoso, conforme a pasta de origem no PKLot).
+A pasta `images/input/` contém 7 imagens. A `2012-12-07_16_52_25.jpg` não tem XML correspondente e foi excluída, restando as 6 imagens usadas.
 
-**Limitação desta amostra:** a classe "livre" é praticamente inexistente (5 de 166 vagas) e **o conjunto de teste não contém nenhuma vaga livre**. Por isso recall, precisão e F1 da classe "livre" não são calculáveis e a acurácia do teste mede apenas a taxa de acerto sobre vagas ocupadas. Esta rodada é tratada como **preliminar** (ver seções 6 e 8).
+Clima das imagens: [PREENCHER: Sunny, Cloudy ou Rainy de cada dia, conforme a pasta de origem no PKLot].
 
-### 3.3 Rodada 2 (amostra ampliada)
+**Limitação desta amostra:** a classe "livre" é praticamente inexistente (5 de 166 vagas) e **o conjunto de teste não contém nenhuma vaga livre**. Por isso recall, precisão e F1 da classe "livre" não são calculáveis e a acurácia do teste mede apenas a taxa de acerto sobre vagas ocupadas. A rodada é tratada como **preliminar**, e a ampliação da amostra, com mais dias, climas e vagas livres, fica como primeira tarefa da M3 (seções 7 e 8).
 
-> ⚠️ **Preencher após ampliar a amostra:** dias, climas, nº de imagens, nº de vagas livres/ocupadas no ajuste e no teste, critério de seleção e lista de IDs. O critério deve incluir situações típicas e difíceis (vagas livres e ocupadas, diferentes horários e climas).
-
-### 3.4 Referência de avaliação
+### 3.3 Referência de avaliação
 
 - **Referência:** atributo `occupied` do XML do PKLot, produzido e verificado manualmente pelos autores do dataset.
 - **Limites:** o grupo não revisou os rótulos; vagas parcialmente ocluídas ou fora do enquadramento podem ter rótulos discutíveis.
-- **Alinhamento:** `src/anotacoes.py` desenha os polígonos sobre a imagem e `src/diagnostico.py` verifica recortes com cantos fora da imagem (**0 recortes sinalizados** em todas as imagens da Rodada 1).
+- **Alinhamento:** `src/anotacoes.py` desenha os polígonos sobre a imagem e `src/diagnostico.py` verifica recortes com cantos fora da imagem (**0 recortes sinalizados** em todas as imagens da rodada preliminar).
 
-### 3.5 Divisão ajuste/teste
+### 3.4 Divisão ajuste/teste
 
 A divisão é **por dia** (`DIAS_TESTE` em `src/avaliacao.py`), porque quadros do mesmo dia, em intervalos de 5 minutos, são quase idênticos. Colocá-los dos dois lados favoreceria artificialmente o resultado. O limiar é escolhido só nos dias de ajuste; os dias de teste são usados uma vez, para a avaliação final.
 
@@ -144,7 +143,7 @@ python src/comparar.py
 python src/figuras.py B
 ```
 
-### 6.3 Resultados da Rodada 1 (preliminar)
+### 6.3 Resultados da rodada preliminar
 
 **Distribuição da medida (todas as 166 vagas):**
 
@@ -195,18 +194,15 @@ Figuras (em `images/results/figuras/`): `fig1_recortes.png`, `fig2_bordas_AB.png
 *Figura 3. Distribuição da medida por classe. Há sobreposição: algumas ocupadas têm medida abaixo da média das livres, e as livres são apenas 5.*
 
 ![Casos da Config B](../images/results/figuras/fig4_casos_B.png)
-*Figura 4. Caso de sucesso (vaga 24) e de falha (vaga 5, 2012-12-12_10_05_05). ⚠️ Descreva o que se vê no recorte da vaga 5 (cor do veículo, sombra, bordas fracas).*
-
-### 6.6 Rodada 2 (amostra ampliada)
-
-> ⚠️ **Preencher após ampliar a amostra** (ver seção 3.3): repetir a tabela de métricas, as matrizes de confusão e os casos de sucesso/falha, agora com vagas livres e ocupadas nos dois conjuntos. Comparar com a Rodada 1 e concluir se a Config B melhora a separação.
+*Figura 4. Caso de sucesso (vaga 24, 2012-12-12_10_00_05, medida 0,1186) e de falha (vaga 5, 2012-12-12_10_05_05, medida 0,0380). Na falha, a vaga está ocupada, mas a medida ficou bem abaixo do limiar de 0,083 e ela foi prevista como livre. [PREENCHER: o que se vê no recorte da vaga 5, como cor do veículo, sombra ou bordas fracas.]*
 
 ## 7. Falhas, limitações e riscos
 
-- **Desbalanceamento extremo na Rodada 1:** 5 livres em 166 vagas, 0 no teste. A conclusão sobre A × B depende da Rodada 2.
+- **Desbalanceamento extremo na amostra preliminar:** 5 livres em 166 vagas, 0 no teste. A conclusão sobre A × B depende de ampliar a amostra, o que fica para a M3.
+- **Ampliação da amostra não realizada na M2:** sem vagas livres no teste, a comparação A × B é apenas um indício. Esta é a primeira tarefa da M3.
 - **Teste em um único dia:** a avaliação é preliminar e pode refletir condições particulares desse dia.
 - **Sensibilidade à iluminação:** os limiares do Canny são fixos; contraste e horário alteram a quantidade de bordas.
-- **Veículos com poucas bordas:** carros de cor próxima à do asfalto ou com baixo contraste geram medida baixa e são confundidos com vagas livres (falha da vaga 5).
+- **Veículos com poucas bordas:** a sobreposição entre classes (seção 6.4) mostra que há veículos com medida baixa, que são confundidos com vagas livres. A causa da falha da vaga 5 deve ser confirmada pela inspeção do recorte (Figura 4).
 - **Sombras e linhas:** podem gerar bordas em vagas livres e elevar a medida.
 - **Descritor único:** uma só medida escalar limita a separação entre classes; mitigação prevista na M3 com descritores adicionais e classificador.
 - **Dependência do rótulo do dataset:** erros de anotação do PKLot não foram verificados pelo grupo.
@@ -215,19 +211,19 @@ Figuras (em `images/results/figuras/`): `fig1_recortes.png`, `fig2_bordas_AB.png
 
 | Tarefa | Responsável | Evidência esperada |
 |---|---|---|
-| Ampliar a amostra (mais dias, climas e vagas livres) e documentá-la | ⚠️ | Tabela de amostra, métricas da Rodada 2 |
-| Avaliar variação de parâmetros da B (área mínima, kernel, abertura), ajustando só nos dias de ajuste | ⚠️ | Tabela comparativa |
-| Descritores adicionais (variância, HSV, LBP) | ⚠️ | CSV de descritores e análise |
-| Classificador sobre os descritores (ex.: regressão logística/SVM) | ⚠️ | Métricas no teste, comparação com o limiar simples |
-| Avaliar por clima e por horário | ⚠️ | Tabela por condição |
-| Overlay final com contagem de vagas livres | ⚠️ | Imagens de saída |
-| Testes e limpeza do repositório | ⚠️ | `tests/`, README final |
+| Ampliar a amostra (mais dias, climas e vagas livres) e documentá-la | Gabriel | Tabela de amostra, métricas com vagas livres no teste |
+| Avaliar variação de parâmetros da B (área mínima, kernel, abertura), ajustando só nos dias de ajuste | Guilherme | Tabela comparativa |
+| Descritores adicionais (variância, HSV, LBP) | Guilherme | CSV de descritores e análise |
+| Classificador sobre os descritores (ex.: regressão logística/SVM) | Guilherme | Métricas no teste, comparação com o limiar simples |
+| Avaliar por clima e por horário | Gabriel | Tabela por condição |
+| Overlay final com contagem de vagas livres | Gabriel e Guilherme | Imagens de saída |
+| Testes e limpeza do repositório | Gabriel | `tests/`, README final |
 
 ## 9. Contribuições dos integrantes
 
 | Integrante | Contribuições | Evidências |
 |---|---|---|
-| Guilherme de Alcantara Leite | Implementação do núcleo do pipeline: leitura dos XMLs do PKLot e desenho das vagas; recorte e retificação por perspectiva (incluindo a correção da ordenação dos cantos por ângulo, que eliminou recortes totalmente pretos nas vagas 4, 5 e 9); densidade de bordas (Config A) e Config B com fechamento morfológico e componentes conectados; escolha do limiar por acurácia balanceada e avaliação no dia de teste; diagnóstico de recortes fora da imagem. Execução dos experimentos da Rodada 1. | `src/anotacoes.py`, `src/recorte.py`, `src/medidas.py`, `src/avaliacao.py`, `src/diagnostico.py`; `images/results/medidas_configA.csv`, `images/results/avaliacao_configA.txt`; histórico de commits |
+| Guilherme de Alcantara Leite | Implementação do núcleo do pipeline: leitura dos XMLs do PKLot e desenho das vagas; recorte e retificação por perspectiva (incluindo a correção da ordenação dos cantos por ângulo, que eliminou recortes totalmente pretos nas vagas 4, 5 e 9); densidade de bordas (Config A) e Config B com fechamento morfológico e componentes conectados; escolha do limiar por acurácia balanceada e avaliação no dia de teste; diagnóstico de recortes fora da imagem. Execução dos experimentos da rodada preliminar. | `src/anotacoes.py`, `src/recorte.py`, `src/medidas.py`, `src/avaliacao.py`, `src/diagnostico.py`; `images/results/medidas_configA.csv`, `images/results/avaliacao_configA.txt`; histórico de commits |
 | Gabriel de Andrade Urbano | Organização do repositório no GitHub (ajustes e padronização do `README.md`, do relatório e dos demais documentos); implementação do comparador A × B e do gerador de figuras do relatório. | `src/comparar.py`, `src/figuras.py`, `images/results/figuras/`; `README.md`, `docs/relatorio_m2.md`, `docs/proposta.md`; histórico de commits |
 
 ## 10. Referências
@@ -241,5 +237,6 @@ Figuras (em `images/results/figuras/`): `fig1_recortes.png`, `fig2_bordas_AB.png
 
 - **Ferramenta:** Claude (Anthropic).
 - **Finalidade:** apoio na redação e estruturação do README, da proposta e deste relatório; sugestões e revisão de código (organização dos scripts, tratamento de erros, implementação da Config B, do comparador e do gerador de figuras).
-- **Materiais modificados:** `README.md`, `docs/proposta.md`, `docs/relatorio_m2.md`, `src/medidas.py`, `src/avaliacao.py`, `src/comparar.py`, `src/figuras.py`, `src/anotacoes.py`, `src/recorte.py`, `src/diagnostico.py`, `requirements.txt`. ⚠️ Ajustar para refletir exatamente o que cada integrante usou.
+- **Uso por integrante:** Guilherme usou a ferramenta no núcleo do pipeline (`src/anotacoes.py`, `src/recorte.py`, `src/medidas.py`, `src/avaliacao.py`, `src/diagnostico.py`, `requirements.txt`). Gabriel [PREENCHER: usou / não usou] ferramenta de IA em `src/comparar.py`, `src/figuras.py`, `README.md` e nos documentos.
+- **Materiais modificados:** `README.md`, `docs/proposta.md`, `docs/relatorio_m2.md`, `src/medidas.py`, `src/avaliacao.py`, `src/comparar.py`, `src/figuras.py`, `src/anotacoes.py`, `src/recorte.py`, `src/diagnostico.py`, `requirements.txt`.
 - **Verificação:** o grupo executou os scripts no PKLot, conferiu as saídas e as métricas, e revisou os textos. A interpretação dos resultados e as decisões técnicas são do grupo, que responde pelo conteúdo entregue.
