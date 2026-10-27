@@ -124,7 +124,7 @@ A Config B reduziu os falsos "livre", mas o teste não tem vagas livres e o limi
 - Proposta: [`docs/proposta.md`](docs/proposta.md)
 - Relatório M2: [`docs/relatorio_m2.md`](docs/relatorio_m2.md)
 - Vídeo M1: https://youtu.be/zJYcdofJcpc
-- Vídeo M2: ⚠️ PREENCHER (YouTube, não listado)
+- Vídeo M2: https://youtu.be/T9y1NH5FoJI
 
 ## Entrega M2
 
