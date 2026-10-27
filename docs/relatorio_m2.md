@@ -215,12 +215,10 @@ Figuras (em `images/results/figuras/`): `fig1_recortes.png`, `fig2_bordas_AB.png
 
 ## 9. Contribuições dos integrantes
 
-> ⚠️ **Preencher com evidências reais** (arquivos, commits, experimentos, revisões). Contagem de commits, isolada, não é evidência suficiente.
-
 | Integrante | Contribuições | Evidências |
 |---|---|---|
-| Guilherme de Alcantara Leite | ⚠️ | ⚠️ |
-| Gabriel de Andrade Urbano | ⚠️ | ⚠️ |
+| Guilherme de Alcantara Leite | Implementação do núcleo do pipeline: leitura dos XMLs do PKLot e desenho das vagas; recorte e retificação por perspectiva (incluindo a correção da ordenação dos cantos por ângulo, que eliminou recortes totalmente pretos nas vagas 4, 5 e 9); densidade de bordas (Config A) e Config B com fechamento morfológico e componentes conectados; escolha do limiar por acurácia balanceada e avaliação no dia de teste; diagnóstico de recortes fora da imagem. Execução dos experimentos da Rodada 1. | `src/anotacoes.py`, `src/recorte.py`, `src/medidas.py`, `src/avaliacao.py`, `src/diagnostico.py`; `images/results/medidas_configA.csv`, `images/results/avaliacao_configA.txt`; histórico de commits |
+| Gabriel de Andrade Urbano | Organização do repositório no GitHub (ajustes e padronização do `README.md`, do relatório e dos demais documentos); implementação do comparador A × B e do gerador de figuras do relatório. | `src/comparar.py`, `src/figuras.py`, `images/results/figuras/`; `README.md`, `docs/relatorio_m2.md`, `docs/proposta.md`; histórico de commits |
 
 ## 10. Referências
 
