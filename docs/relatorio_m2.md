@@ -36,11 +36,12 @@ Na M2 o objetivo foi transformar a proposta da M1 em uma implementação parcial
 
 ### 2.2 Resposta ao feedback da M1
 
-> ⚠️ **Preencher com o feedback recebido.** Para cada orientação, indique a ação tomada ou a justificativa técnica para ter adotado outra solução, com o arquivo ou experimento correspondente. Se não houve feedback escrito, declare isso aqui.
-
 | Orientação recebida | Ação tomada / justificativa | Arquivo ou experimento |
 |---|---|---|
-| ⚠️ | ⚠️ | ⚠️ |
+| Escolher uma única linha de baseline (descritor clássico + classificador simples), sem SVM, Random Forest e CNN em paralelo | A M2 trabalha com uma única linha: medida de bordas com limiar de decisão, comparando apenas duas configurações (A × B). SVM/RF foram adiados para a M3 e a CNN saiu do escopo | Seção 2.1; `src/medidas.py`, `src/avaliacao.py` |
+| Corrigir a descrição da amostra (poucas imagens de UFPR04, e não dezenas de duas câmeras) | A amostra é descrita exatamente: 6 imagens de dois dias, 166 vagas, com a distribuição de livres e ocupadas. A sétima imagem de `images/input/` não tem XML e ficou de fora | Seção 3.2; `images/input/` |
+| Separar treino/teste por dia ou câmera | Divisão por dia, com o limiar escolhido só nos dias de ajuste. A separação por câmera fica para a M3 | Seção 3.5; `DIAS_TESTE` em `src/avaliacao.py` |
+| Só comparar CNN depois de um baseline clássico reproduzível | CNN removida do escopo; o baseline é reproduzível pelos comandos da seção 6.2 | Seções 2.1 e 6.2 |
 
 ## 3. Dados e protocolo experimental
 
@@ -184,8 +185,17 @@ python src/figuras.py B
 
 Figuras (em `images/results/figuras/`): `fig1_recortes.png`, `fig2_bordas_AB.png`, `fig3_histogramas.png`, `fig4_casos_B.png`.
 
-> ⚠️ **Inserir as figuras com legenda e interpretação.** Modelo:
-> `![Legenda](../images/results/figuras/fig4_casos_B.png)` — *Figura X. Caso de falha (vaga 5, 2012-12-12_10_05_05): ⚠️ descreva o que se vê no recorte (cor do veículo, sombra, bordas fracas) e por que a medida ficou abaixo do limiar.*
+![Recortes retificados](../images/results/figuras/fig1_recortes.png)
+*Figura 1. Vagas recortadas e retificadas para 64×96 px, o que padroniza geometria e escala antes da medida.*
+
+![Bordas A × B](../images/results/figuras/fig2_bordas_AB.png)
+*Figura 2. Bordas da Config A (brutas) e da Config B (com fechamento e filtro de componentes). A B remove componentes pequenos, que tendem a ser textura de asfalto.*
+
+![Histogramas](../images/results/figuras/fig3_histogramas.png)
+*Figura 3. Distribuição da medida por classe. Há sobreposição: algumas ocupadas têm medida abaixo da média das livres, e as livres são apenas 5.*
+
+![Casos da Config B](../images/results/figuras/fig4_casos_B.png)
+*Figura 4. Caso de sucesso (vaga 24) e de falha (vaga 5, 2012-12-12_10_05_05). ⚠️ Descreva o que se vê no recorte da vaga 5 (cor do veículo, sombra, bordas fracas).*
 
 ### 6.6 Rodada 2 (amostra ampliada)
 
