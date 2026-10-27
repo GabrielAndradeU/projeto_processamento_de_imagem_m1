@@ -1,97 +1,153 @@
-# projeto_processamento_de_imagem_m1
-
 # Detecção de Vagas de Estacionamento Livres/Ocupadas
 
-Projeto aplicado longitudinal da disciplina de Processamento de Imagens — Etapa M1.
+Projeto aplicado longitudinal da disciplina de Processamento de Imagens — **Etapa M2** (continuação da M1).
 
 ## Integrantes
 
-- Guilherme de Alcantara Leite
-- Gabriel de Andrade Urbano
+| Integrante | GitHub | Contribuição principal (evidências em `docs/relatorio_m2.md`, seção 9) |
+|---|---|---|
+| Guilherme de Alcantara Leite | [@guilhermedalcantara](https://github.com/guilhermedalcantara) | Núcleo do pipeline: leitura de XML, recorte retificado, medidas de bordas (Configs A e B), avaliação com limiar e diagnóstico de recortes |
+| Gabriel de Andrade Urbano | [@GabrielAndradeU](https://github.com/GabrielAndradeU) | Organização do repositório e dos documentos; comparador A × B (`src/comparar.py`) e gerador de figuras (`src/figuras.py`) |
 
-## Problema investigado
+## Problema
 
-A partir de imagens capturadas por câmeras fixas de estacionamentos, o projeto busca determinar automaticamente, para cada vaga individual, se ela está **livre** ou **ocupada**.
+A partir de imagens de câmeras fixas de estacionamento, determinar automaticamente, **para cada vaga**, se ela está **livre** ou **ocupada**, usando apenas o conteúdo visual da vaga (sem sensores).
 
-Trata-se de um problema de processamento de imagens porque a resposta (livre/ocupada) precisa ser inferida a partir do conteúdo visual de cada vaga — não há nenhuma informação estruturada disponível além da imagem em si. O sistema deve analisar o recorte correspondente a cada vaga e decidir seu estado com base em características visuais extraídas da imagem (por exemplo, textura, variação de intensidade de pixels ou bordas presentes na região).
+Sistemas de monitoramento de vagas costumam depender de sensores físicos por vaga, caros de instalar e manter. Aqui exploramos o uso de câmeras já existentes e análise de imagem, sem hardware adicional por vaga.
 
-## Contexto de aplicação
+## Objetivos (atualizados na M2)
 
-Sistemas de monitoramento de vagas são usados em estacionamentos comerciais, shoppings e áreas urbanas para orientar motoristas até vagas livres e reduzir o tempo gasto procurando estacionamento. Normalmente dependem de sensores físicos por vaga (caros de instalar e manter) ou de câmeras já existentes, que é a abordagem explorada aqui: usar apenas a análise de imagem para inferir a ocupação, sem hardware adicional por vaga.
+- Recortar e retificar cada vaga a partir dos polígonos do XML do PKLot.
+- Segmentar/descrever o conteúdo de cada vaga com técnicas clássicas: bordas (Canny), morfologia e componentes conectados.
+- Comparar, de forma controlada, **bordas brutas (Config A)** contra **bordas + morfologia + filtro de componentes (Config B)**.
+- Avaliar quantitativamente (acurácia balanceada, recall/precisão/F1 da classe "livre") com separação ajuste/teste **por dia**.
+- M3: evoluir para um classificador sobre vários descritores (plano em `docs/relatorio_m2.md`).
 
-## Objetivo
+> **Mudança de escopo desde a M1:** a proposta previa comparar descritores clássicos + SVM/RF contra uma CNN e usar o CNRPark-EXT. Na M2 o grupo concentrou-se em segmentação, morfologia e descritores simples (foco da etapa); CNN e CNRPark-EXT saem do escopo. Justificativa e registro em `docs/relatorio_m2.md` e `docs/proposta.md`.
 
-**Objetivo geral:** desenvolver um sistema capaz de classificar, a partir de uma imagem de estacionamento, o estado de cada vaga (livre ou ocupada).
+## Estágio atual
 
-**Objetivos específicos:**
-- Extrair automaticamente o recorte de imagem correspondente a cada vaga, a partir das coordenadas fornecidas pelo dataset.
-- Investigar características visuais simples (variância de intensidade, contagem de bordas) capazes de diferenciar vagas livres de ocupadas.
-- Avaliar a proporção de acertos da abordagem inicial em um subconjunto de imagens de teste.
-- Evoluir progressivamente de regras simples baseadas em limiar para uma abordagem de classificação mais robusta ao longo da M2 e M3.
+| Etapa do pipeline | Estado |
+|---|---|
+| Leitura do XML e gabarito (`src/anotacoes.py`) | ✅ implementado |
+| Recorte retificado por vaga (`src/recorte.py`) | ✅ implementado |
+| Diagnóstico de recortes inválidos (`src/diagnostico.py`) | ✅ implementado |
+| Medida de densidade de bordas — Config A (`src/medidas.py A`) | ✅ implementado |
+| Config B: fechamento morfológico + componentes conectados (`src/medidas.py B`) | ✅ implementado |
+| Avaliação ajuste/teste com limiar (`src/avaliacao.py`) | ✅ implementado |
+| Comparação A × B (`src/comparar.py`) e figuras (`src/figuras.py`) | ✅ implementado |
+| Ampliação da amostra (mais dias, climas e vagas livres) | 🔜 planejado M3 |
+| Descritores adicionais (variância, LBP, HSV) | 🔜 planejado M3 |
+| Classificador (SVM/regressão logística) | 🔜 planejado M3 |
+| Overlay final com contagem de vagas livres | 🔜 planejado M3 |
 
-## Visão resumida da solução proposta
-
-O sistema recebe uma imagem de estacionamento e as coordenadas de cada vaga (fornecidas pelo dataset). Cada vaga é recortada individualmente, pré-processada (conversão para escala de cinza, normalização) e analisada por meio de uma característica extraída da região (inicialmente, variância de intensidade de pixels ou contagem de bordas). Com base nessa característica, a vaga é classificada como livre ou ocupada.
-
-```
-Imagem do estacionamento
-        ↓
-Recorte de cada vaga (coordenadas do dataset)
-        ↓
-Pré-processamento (escala de cinza, normalização)
-        ↓
-Extração de característica (variância de pixels / bordas)
-        ↓
-Classificação (limiar simples, nesta etapa)
-        ↓
-Resultado: vaga livre ou ocupada
-```
-
-## Conjunto/origem das imagens
-
-- **Dataset:** [PKLot](https://web.inf.ufpr.br/vri/databases/parking-lot-database/) (UFPR/PUCPR), também disponível no Kaggle.
-- Contém milhares de imagens de estacionamentos reais, já anotadas com a posição de cada vaga e seu status (ocupada/livre), capturadas em diferentes condições de iluminação e clima.
-- Para a M1, será utilizado um subconjunto pequeno e controlado do dataset (poucas imagens de um mesmo estacionamento, em condição de iluminação semelhante), para reduzir variabilidade nos primeiros testes.
-
-## Estágio atual do projeto
-
-Etapa **M1**: definição do problema, escolha do dataset e desenho do pipeline preliminar concluídos. [Atualizar aqui conforme o projeto avançar]
-
-## Organização do repositório
+## Pipeline implementado
 
 ```
-[nome-do-projeto]/
+imagem .jpg + .xml (PKLot)
+   ↓ anotacoes.py   : polígono + rótulo (livre/ocupada) de cada vaga
+   ↓ recorte.py     : retificação por perspectiva → recorte 64×96
+   ↓ medidas.py     : cinza → Gaussiana 5×5 → Canny(50,150) → descarta margem de 15%
+   │                  Config A: densidade de bordas
+   │                  Config B: + fechamento morfológico + filtro de componentes por área
+   ↓ avaliacao.py   : limiar escolhido nos dias de ajuste → métricas no dia de teste
+   ↓ comparar.py    : tabela A × B
+   ↓ figuras.py     : figuras do relatório
+```
+
+Saídas: `images/results/` (contornos, recortes, CSV de medidas, figuras) e métricas no terminal.
+
+## Dados
+
+- **Dataset:** [PKLot](https://web.inf.ufpr.br/vri/databases/parking-lot-database/) (UFPR/PUCPR), licença CC BY 4.0. Citar: Almeida et al., *PKLot – A robust dataset for parking lot classification*, Expert Systems with Applications, 2015.
+- **Estacionamento/câmera usado:** UFPR04.
+- **Não versionamos o dataset completo.** Em `images/input/` há apenas a amostra usada nos experimentos (pares `AAAA-MM-DD_HH_MM_SS.jpg` + `.xml`).
+- **Amostra preliminar:** 6 imagens, 166 vagas.
+  - Ajuste: 2012-12-07 (`16_42_25`, `16_47_25`, `17_12_25`, `17_17_25`; 110 vagas, 5 livres).
+  - Teste: 2012-12-12 (`10_00_05`, `10_05_05`; 56 vagas, **0 livres**).
+  - Clima: [PREENCHER: Sunny, Cloudy ou Rainy de cada dia].
+  - A imagem `2012-12-07_16_52_25.jpg` está em `images/input/` mas não tem XML, então não é usada.
+- **Como obter os dados:** baixe o PKLot pelo link acima, localize as imagens dos dias 2012-12-07 e 2012-12-12 da UFPR04 e copie para `images/input/` o `.jpg` e o `.xml` de cada ID listado.
+- **Limitação:** quase não há vagas livres na amostra atual e o teste não tem nenhuma. A ampliação da amostra fica para a M3.
+- **Referência de avaliação:** rótulos `occupied` do XML do PKLot, verificados manualmente pelos autores do dataset. Limite: não foram revisados por nós.
+- **Atenção a vazamento:** ajuste e teste são separados por **dia** (`DIAS_TESTE` em `src/avaliacao.py`), pois quadros do mesmo dia são quase idênticos.
+
+## Tecnologias
+
+- **Python 3.12**, com ambiente virtual `venv` (testado no Windows).
+- **OpenCV** (`opencv-python`): leitura de imagens, suavização gaussiana, Canny, transformação de perspectiva, operações morfológicas e componentes conectados.
+- **NumPy**: arrays, coordenadas dos polígonos e cálculo das medidas.
+- **Matplotlib**: figuras do relatório (`src/figuras.py`).
+- **Biblioteca padrão:** `xml.etree.ElementTree` (anotações XML), `csv`, `pathlib`.
+- **Dados:** PKLot, câmera UFPR04 (imagens `.jpg` com anotações `.xml` por vaga).
+
+Versões exatas das bibliotecas em `requirements.txt`.
+
+## Instalação
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+## Execução (a partir da raiz do repositório)
+
+```bash
+python src/anotacoes.py     # overlay de vagas: images/results/*_vagas.jpg
+python src/recorte.py       # recortes: images/results/recortes/
+python src/diagnostico.py   # recortes suspeitos (cantos fora da imagem)
+python src/medidas.py A     # Config A -> images/results/medidas_configA.csv
+python src/medidas.py B     # Config B -> images/results/medidas_configB.csv
+python src/avaliacao.py images/results/medidas_configB.csv   # métricas detalhadas de uma config
+python src/comparar.py      # tabela A x B -> images/results/comparacao_AB.md
+python src/figuras.py B     # figuras do relatório -> images/results/figuras/
+```
+
+Os scripts podem ser chamados de qualquer diretório (os caminhos partem da raiz do repositório).
+
+**Exemplo mínimo:** com os arquivos de `images/input/`, rode `python src/medidas.py A`, `python src/medidas.py B` e `python src/comparar.py`. A saída esperada é a tabela de métricas no dia de teste (baseline, Config A, Config B) e as matrizes de confusão. [PREENCHER: colar aqui um trecho real da saída do `comparar.py`.]
+
+## Resultados
+
+Resumo, tabelas e figuras: [`docs/relatorio_m2.md`](docs/relatorio_m2.md).
+
+**Amostra preliminar** — dia de teste 2012-12-12, 56 vagas, todas ocupadas:
+
+| Config | Limiar | Ocupadas previstas como livres (FP) | Ocupadas corretas (VN) |
+|---|---|---|---|
+| A (bordas brutas) | 0,0832 | 23 | 33 |
+| B (+ morfologia) | 0,0831 | 12 | 44 |
+
+A Config B reduziu os falsos "livre", mas o teste não tem vagas livres e o limiar foi ajustado com apenas 5 vagas livres, então **a conclusão é preliminar**. Recall, precisão e F1 da classe "livre" só poderão ser calculados quando a amostra for ampliada na M3.
+
+## Estrutura
+
+```
 ├── README.md
+├── requirements.txt
 ├── docs/
-│   └── proposta.md       # proposta detalhada (problema, objetivo, pipeline, viabilidade)
+│   ├── proposta.md
+│   └── relatorio_m2.md
 ├── images/
-│   ├── input/            # amostra de imagens de entrada
-│   └── results/          # imagens de saída/experimentos
-├── src/                  # código-fonte (quando existir)
-├── notebooks/            # notebooks exploratórios
-└── tests/                # testes (quando aplicável)
+│   ├── input/        # amostra do PKLot
+│   └── results/      # saídas intermediárias e finais
+├── src/              # anotacoes, recorte, diagnostico, medidas, avaliacao, comparar, figuras
+├── notebooks/
+└── tests/
 ```
 
-## Tecnologias previstas
+## Documentação e vídeos
 
-- **Linguagem:** Python
-- **Bibliotecas previstas:** OpenCV (pré-processamento, recorte, extração de características), NumPy
-- Justificativa: Python + OpenCV é uma combinação amplamente documentada para tarefas clássicas de PDI (recorte, filtros, extração de bordas), adequada ao nível de complexidade da primeira versão do projeto.
-
-## Instruções para reproduzir experimentos
-
-[Ainda não há código implementado nesta etapa (M1). Esta seção será preenchida na M2 com instruções de ambiente (requirements.txt), comando de execução e parâmetros necessários.]
-
-## Vídeo da M1
-
-[https://youtu.be/zJYcdofJcpc]
-
-## Documentação adicional
-
-- Proposta detalhada: [`docs/proposta.md`](docs/proposta.md)
+- Proposta: [`docs/proposta.md`](docs/proposta.md)
+- Relatório M2: [`docs/relatorio_m2.md`](docs/relatorio_m2.md)
+- Vídeo M1: https://youtu.be/zJYcdofJcpc
+- Vídeo M2: https://youtu.be/T9y1NH5FoJI
 
 ## Uso de Inteligência Artificial generativa
 
-Ferramenta utilizada: Claude (Anthropic), para apoio na redação e estruturação deste README e da proposta detalhada. As decisões técnicas (escolha do problema, do dataset PKLot, do pipeline e das técnicas candidatas) foram definidas pelo grupo; a IA foi usada para organizar e redigir esse conteúdo de forma clara, e o texto final foi revisado e ajustado pelos integrantes.
-
-
+- **Ferramenta:** Claude (Anthropic).
+- **Finalidade:** apoio na redação e estruturação do README, da proposta e do relatório; sugestões e revisão de código (organização dos scripts, tratamento de erros, implementação da Config B, do comparador e do gerador de figuras).
+- **Uso por integrante:** Guilherme usou a ferramenta no núcleo do pipeline (`src/anotacoes.py`, `src/recorte.py`, `src/medidas.py`, `src/avaliacao.py`, `src/diagnostico.py`, `requirements.txt`). Gabriel [PREENCHER: usou / não usou] ferramenta de IA em `src/comparar.py`, `src/figuras.py` e nos documentos.
+- **Materiais modificados:** `README.md`, `docs/proposta.md`, `docs/relatorio_m2.md`, `src/medidas.py`, `src/avaliacao.py`, `src/comparar.py`, `src/figuras.py`, `src/anotacoes.py`, `src/recorte.py`, `src/diagnostico.py`, `requirements.txt`.
+- **Verificação:** o grupo executou o código, conferiu as métricas nos CSV/saídas e revisou os textos. As decisões técnicas e a interpretação dos resultados são do grupo.
